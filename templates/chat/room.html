@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="utf-8">
+    <title>{{ room.label }}</title>
+
+    <link href="{% static 'assets/css/normalize.css' %}"  rel="stylesheet">
+    <link href="{% static 'assets/css/skeleton.css' %}"  rel="stylesheet">
+    <link href="{% static 'assets/css/chat.css' %}"  rel="stylesheet">
+</head>
+
+<body>
+
+<p class="quiet">
+Anyone with this URL can join the room and chat:
+<code>{{ request.scheme }}://{{ request.get_host }}/chat/{{ room.label }}</code>
+</p>
+{% if user.is_authenticated %}
+<p>
+<label for="handle">Your name:</label>
+<input id="handle" type="text" placeholder="handle" value="{{ user.username }}">
+</p>
+{% else %}
+<p>
+<label for="handle">Your name:</label>
+<input id="handle" type="text" placeholder="handle">
+</p>
+{% endif %}
+<form id="chatform">
+{% csrf_token %}
+<table id="chat">
+  <tbody>
+    {% for message in messages %}
+      <tr>
+        <td>{{ message.formatted_timestamp }}</td>
+        <td>{{ message.handle }}</td>
+        <td>{{ message.message }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+  <tr>
+    <td>Say something:</td>
+    <td colspan=2>
+      <input id="message" type="text" placeholder="message">
+      <button type="submit" id="go">Say it</button>
+    </td>
+  </tfoot>
+</table>
+</form>
+
+<script src="{% static 'assets/js/jquery-2.1.0.min.js' %}"></script>
+<script src="{% static 'assets/js/reconnecting-websocket.min.js' %}"></script>
+<script src="{% static 'assets/js/chat.js' %}"></script>
+
+</body>
+</html>
